@@ -52,6 +52,26 @@ Replace `:storeId` and `:skuId` with the actual `_id` values from the
 The response includes the daily forecast, the 7-day `predictedDemand` total,
 and the regression slope/intercept for explainability.
 
+## Redistribution rules
+
+For one SKU across all stores:
+
+```text
+GET http://localhost:5000/api/redistribution/:skuId
+```
+
+For every SKU in the catalog:
+
+```text
+GET http://localhost:5000/api/redistribution
+```
+
+The engine compares current stock with each store's 7-day forecast. It flags a
+source when `stock > forecast x 1.5`, a destination when
+`stock < forecast x 0.5`, and only matches stores within 60 km using
+`utils/distanceTable.js`.
+Perishables receive expiry-weighted urgency using `1 + 7 / shelfLifeDays`.
+
 The seed script creates 3 stores, 5 SKUs, current inventory, and 90 days of
 deterministic synthetic sales history with trend, weekend spikes, and store
 imbalances for future forecasting and redistribution work.

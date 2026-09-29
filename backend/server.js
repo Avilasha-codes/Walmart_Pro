@@ -10,6 +10,10 @@ const Store = require('./models/Store');
 const Transfer = require('./models/Transfer');
 const User = require('./models/User');
 const { forecastDemand } = require('./services/forecastService');
+const {
+  findAllRedistributionOpportunities,
+  findRedistributionOpportunities,
+} = require('./services/redistributionService');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -24,6 +28,8 @@ app.get('/', (req, res) => {
     health: '/api/health',
     dataSummary: '/api/data-summary',
     forecast: '/api/forecasts/:storeId/:skuId',
+    allRedistribution: '/api/redistribution',
+    redistribution: '/api/redistribution/:skuId',
   });
 });
 
@@ -52,6 +58,26 @@ app.get('/api/forecasts/:storeId/:skuId', async (req, res) => {
   try {
     const forecast = await forecastDemand(req.params.storeId, req.params.skuId);
     res.json(forecast);
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    res.status(statusCode).json({ error: error.message });
+  }
+});
+
+app.get('/api/redistribution', async (req, res) => {
+  try {
+    const recommendations = await findAllRedistributionOpportunities();
+    res.json(recommendations);
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    res.status(statusCode).json({ error: error.message });
+  }
+});
+
+app.get('/api/redistribution/:skuId', async (req, res) => {
+  try {
+    const recommendations = await findRedistributionOpportunities(req.params.skuId);
+    res.json(recommendations);
   } catch (error) {
     const statusCode = error.statusCode || 500;
     res.status(statusCode).json({ error: error.message });

@@ -14,11 +14,11 @@ const storeSeed = [
 ];
 
 const skuSeed = [
-  { name: 'Whole Milk', category: 'Dairy', perishable: true },
-  { name: 'Bananas', category: 'Produce', perishable: true },
-  { name: 'Bread', category: 'Bakery', perishable: true },
-  { name: 'Canned Beans', category: 'Pantry', perishable: false },
-  { name: 'Laundry Detergent', category: 'Household', perishable: false },
+  { name: 'Whole Milk', category: 'Dairy', perishable: true, shelfLifeDays: 14 },
+  { name: 'Bananas', category: 'Produce', perishable: true, shelfLifeDays: 7 },
+  { name: 'Bread', category: 'Bakery', perishable: true, shelfLifeDays: 5 },
+  { name: 'Canned Beans', category: 'Pantry', perishable: false, shelfLifeDays: 730 },
+  { name: 'Laundry Detergent', category: 'Household', perishable: false, shelfLifeDays: 1095 },
 ];
 
 function salesForDay(skuIndex, dayIndex, storeIndex) {
@@ -56,11 +56,11 @@ async function generateSyntheticData() {
 
   for (let storeIndex = 0; storeIndex < stores.length; storeIndex += 1) {
     for (let skuIndex = 0; skuIndex < skus.length; skuIndex += 1) {
-      const imbalance = (storeIndex - skuIndex) * 18;
+      const imbalance = (storeIndex - 1) * 85 - skuIndex * 8;
       inventory.push({
         storeId: stores[storeIndex]._id,
         skuId: skus[skuIndex]._id,
-        stockQty: Math.max(10, 90 + imbalance),
+        stockQty: Math.max(10, 140 + imbalance),
         recordedAt: today,
       });
 
